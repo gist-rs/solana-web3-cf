@@ -1,0 +1,51 @@
+[package]
+name = "solana-web3-cf"
+version = "0.1.0"
+edition = "2018"
+description = "Solana Web3 on Cloudflare Worker."
+license = "MIT"
+repository = "https://github.com/gist-rs/solana-web3-cf"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+cfg-if = "1.0.0"
+worker = "0.0.17"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version ="1.0", default-features = false }
+
+cookie = { version = "0.17", features = ["percent-encode"] }
+nacl = "0.5.3"
+bs58 = "0.5.0"
+anyhow = "1.0.71"
+reqwest = { version = "0.11" , features = ["json"] }
+
+getrandom = { version = "0.2", features = ["js"] }
+solana-web3-wasm = { git = "https://github.com/avareum/solana-web3-wasm", rev="d6675d6", features = ["nft_info"]}
+thiserror = "1.0"
+urlencoding = "2.1.2"
+serde_qs = "0.12.0"
+percent-encoding = "2.3.0"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+dotenv = "0.15"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.28.2", features = ["full"] }
+
+[profile.release]
+opt-level = "z"  # Optimize for size.
+strip = true  # Automatically strip symbols from the binary.
+lto = true # Enable Link Time Optimization (LTO)
+codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
+panic = "abort"
