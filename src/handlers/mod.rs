@@ -5,3 +5,4 @@ pub mod pay;
 pub mod proxy;
 pub mod qr;
 pub mod solana;
+pub mod wallet;

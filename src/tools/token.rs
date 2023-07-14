@@ -1,3 +1,5 @@
+use std::fmt;
+
 use solana_web3_wasm::{
     solana_client_wasm::WasmClient,
     solana_extra_wasm::program::{

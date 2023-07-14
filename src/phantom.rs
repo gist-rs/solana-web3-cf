@@ -1,5 +1,3 @@
-pub const PHANTOM_ENCRYPTION_PUBKEY_KEY_NAME: &str = "PHANTOM_ENCRYPTION_PUBLIC_KEY";
-
 // WIP: Some what wrong implement.
 pub fn verify_session_data(encryption_pubkey: &str, session_str: &str) -> anyhow::Result<String> {
     let session_bytes = bs58::decode(session_str)
