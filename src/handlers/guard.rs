@@ -23,7 +23,7 @@ pub struct Web3Token {
 }
 
 #[derive(Debug, Error)]
-#[error("expected valid phantom, got \"{0}\"")]
+#[error("expect valid phantom, got \"{0}\"")]
 pub struct InvalidDataError(pub String);
 
 impl FromStr for Web3Token {

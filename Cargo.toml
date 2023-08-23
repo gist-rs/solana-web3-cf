@@ -1,7 +1,7 @@
 [package]
 name = "solana-web3-cf"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
 description = "Solana Web3 on Cloudflare Worker."
 license = "MIT"
 repository = "https://github.com/gist-rs/solana-web3-cf"
@@ -19,7 +19,7 @@ default = ["console_error_panic_hook"]
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
 cfg-if = "1.0.0"
-worker = "0.0.17"
+worker = "0.0.18"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version ="1.0", default-features = false }
 
@@ -35,6 +35,10 @@ thiserror = "1.0"
 urlencoding = "2.1.2"
 serde_qs = "0.12.0"
 percent-encoding = "2.3.0"
+
+# No `to_bytes`, will use forked
+# fast_qr = { version = "0.9.0", features = ["image"]}
+fast_qr = { git = "https://github.com/katopz/fast_qr.git", features = ["image"]}
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"

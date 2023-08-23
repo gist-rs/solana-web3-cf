@@ -1,4 +1,6 @@
-use handlers::{nft::handle_nft_req, pay::handle_pay_req, wallet::handle_wallet_req};
+use handlers::{
+    nft::handle_nft_req, pay::handle_pay_req, qr::handle_qr_req, wallet::handle_wallet_req,
+};
 use worker::*;
 
 mod handlers;
@@ -31,6 +33,9 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
     // functionality and a `RouteContext` which you can use to  and get route parameters and
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
     router
+        .get_async("/qr/:size/:data", |req, ctx| async move {
+            handle_qr_req(req, ctx).await
+        })
         .get_async("/wallet/:command", |req, ctx| async move {
             handle_wallet_req(req, ctx).await
         })

@@ -9,45 +9,46 @@ use solana_web3_wasm::{
 };
 use worker::Delay;
 
+// Ref: Suggestion from doc to use reference `finality: 'confirmed'` at https://docs.solanapay.com/core/transfer-request/merchant-integration
+// Anyway this loop retry logic not quite right due to last sig can be something else and loop retry can go wrong.
+// And memo sometime can be optional.
 #[allow(dead_code)]
 pub async fn loop_find_reference_by_memo(
     client: &WasmClient,
     reference: &Pubkey,
-    memo: String,
+    memo: &str,
 ) -> anyhow::Result<Signature> {
     // Get latest signature.
-    let latest_confirmed_statuses = client
+    let signatures = client
         .get_signatures_for_address(reference)
         .await
-        .expect("Expected latest_confirmed_signatures");
+        .expect("Expect latest_confirmed_signatures");
 
     // Already confirm?
-    let confirmed_status = latest_confirmed_statuses
-        .iter()
-        .find(|e| e.memo == Some(memo.to_owned()));
+    let confirmed_status = signatures.iter().find(|e| e.memo == Some(memo.to_owned()));
     if let Some(confirmed_status) = confirmed_status {
         return Ok(Signature::from_str(confirmed_status.signature.as_ref())
-            .expect("Expected valid signature"));
+            .expect("Expect valid signature"));
     }
 
     // Keep fetch from latest signature.
-    let latest_confirmed_signature = latest_confirmed_statuses
+    let oldest_confirmed_signature = signatures
         .last()
-        .expect("Expected latest_confirmed_signature");
+        .expect("Expect latest_confirmed_signature");
 
-    println!("last know signature: {latest_confirmed_signature:?}");
+    println!("last know signature: {oldest_confirmed_signature:?}");
 
     // Fetch
     let mut i = 0;
-    let max_loops = 20;
+    let max_loops = 2;
     loop {
         let confirmed_signatures = client
             .get_signatures_for_address_with_config(
                 reference,
                 GetConfirmedSignaturesForAddress2Config {
                     before: Some(
-                        Signature::from_str(latest_confirmed_signature.signature.as_ref())
-                            .expect("Expected valid signature"),
+                        Signature::from_str(oldest_confirmed_signature.signature.as_ref())
+                            .expect("Expect valid signature"),
                     ),
                     limit: Some(100),
                     until: None,
@@ -64,7 +65,7 @@ pub async fn loop_find_reference_by_memo(
                     .find(|e| e.memo == Some(memo.to_owned()));
                 if let Some(confirmed_status) = confirmed_status {
                     return Ok(Signature::from_str(confirmed_status.signature.as_ref())
-                        .expect("Expected valid signature"));
+                        .expect("Expect valid signature"));
                 }
 
                 Delay::from(Duration::from_secs(5)).await;
@@ -85,9 +86,9 @@ pub async fn loop_find_reference_by_memo(
 pub async fn loop_find_reference_by_memo_from_endpoint(
     endpoint: &EndPoint,
     reference: &str,
-    memo: String,
+    memo: &str,
 ) -> anyhow::Result<Signature> {
-    let reference = Pubkey::from_str(reference).expect("Expected reference as Pubkey");
+    let reference = Pubkey::from_str(reference).expect("Expect reference as Pubkey");
     let client = Web3WasmClient::new(endpoint);
 
     loop_find_reference_by_memo(&client, &reference, memo).await

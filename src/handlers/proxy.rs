@@ -15,6 +15,6 @@ pub async fn handle_proxy_req(_req: Request, _ctx: RouteContext<()>) -> Result<R
                 Err(err) => Response::error(format!("${err}"), 500),
             }
         }
-        None => Response::error("Expected url params".to_string(), 404),
+        None => Response::error("Expect url params".to_string(), 404),
     }
 }

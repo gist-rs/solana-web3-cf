@@ -1,4 +1,6 @@
 // WIP: Some what wrong implement.
+// Should take a look at https://github.com/phantom/sign-in-with-solana#message-parsing
+// and https://github.com/phantom/sign-in-with-solana#sign-in-output-verification-backend
 pub fn verify_session_data(encryption_pubkey: &str, session_str: &str) -> anyhow::Result<String> {
     let session_bytes = bs58::decode(session_str)
         .into_vec()

@@ -951,7 +951,7 @@ where
         self.process_ixs(&instructions, signing_keypairs).await
     }
 
-    /// Transfer tokens to another account, given an expected fee
+    /// Transfer tokens to another account, given an expect fee
     #[allow(clippy::too_many_arguments)]
     pub async fn transfer_with_fee<S: Signers>(
         &self,

@@ -42,7 +42,7 @@ pub async fn handle_wallet_req(_req: Request, ctx: RouteContext<()>) -> Result<R
                 _ => Response::error("Invalid command".to_string(), 401),
             }
         }
-        None => Response::error("Expected some command".to_string(), 401),
+        None => Response::error("Expect some command".to_string(), 401),
     }
 }
 
